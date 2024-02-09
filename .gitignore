@@ -1,0 +1,21 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# folders
+venv/
+DNU/
+old/
+certs/
+
+
+
+# files
+*.csv
+
+
+# misc
+.DS_Store
+*~
+

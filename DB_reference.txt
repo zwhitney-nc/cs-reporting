@@ -1,0 +1,52 @@
+SSH Commands:
+
+GPDB:
+ssh -L localhost:5434:usa-gpdb-webapi-db.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@3.90.60.8 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+
+HEDB (read replica):
+ssh -L localhost:5434:usa-production-read-replica.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@3.90.60.8 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+
+HEDB (prod):
+ssh -L localhost:5434:usa-production.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@3.90.60.8 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+
+analytics-events-data:
+ssh -L localhost:3308:analytics-events-data.cluster-cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:3306 zac_whitney@3.90.60.8 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+
+
+Queries:
+
+GPDB:
+SELECT *
+FROM recordings
+WHERE organization_id = CUSTOMER_ORG_ID
+  and deleted_at is null;
+
+Find GPDB Org ID:
+SELECT DISTINCT ON (signable_id) signable_id
+FROM signatures
+WHERE value LIKE '%intuit%'
+  AND signable_type = 'Organization';
+
+HEDB (all results):
+SELECT *
+FROM practiceobjects
+         INNER JOIN
+     customerkeys
+     ON
+         customerkeys.event_id = practiceobjects.event_id
+WHERE customerkeys.user_id = (SELECT id FROM users WHERE email = 'rob@name-coach.com');
+
+HEDB (unique results only):
+SELECT DISTINCT ON (email) email
+FROM practiceobjects
+         INNER JOIN
+     customerkeys
+     ON
+         customerkeys.event_id = practiceobjects.event_id
+WHERE customerkeys.user_id = (SELECT id FROM users WHERE email = 'rob@name-coach.com');
+
+analytics-events-data:
+SELECT *
+FROM analytics_events
+WHERE customer_id LIKE '%lucasfilm.com%' and recording_id is not null;
+
