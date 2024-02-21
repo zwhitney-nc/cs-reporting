@@ -4,11 +4,18 @@ from datetime import datetime
 
 #update these before running each time
 path = '/Users/zacwhitney/Documents/CS_Reporting/'
-database = 'gpdb'
-input_fn = 'counterpart_GPDB_recordings_202402091528.csv'
+database = 'hedb'
+input_fn = 'pitt_HEDB_recordings_202402211157.csv'
 output_fn = input_fn.rstrip('.csv') + '_converted.csv'
 dedupe = True
 #recordCols = ['recording']
+
+# date/time formats
+sqlformat = '%Y-%m-%d %H:%M:%S.%f'
+excelformat = '%m/%d/%Y %I:%M:%S %p'
+# 12 hour time: '%I:%M %p'
+
+
 
 df = pd.read_csv(path + input_fn)
 
@@ -43,21 +50,21 @@ elif database == 'gpdb':
 
     df['recording_url'] = df.apply(convertURL_GPDB, axis = 1)
 
+# sort and dedupe
+if 'created_at' in df.columns:
+    df.sort_values(by='created_at',
+                   ascending=False,
+                   inplace=True,
+                   key = lambda x: pd.to_datetime(x, format=sqlformat))
+
+if dedupe:
+    if database == 'hedb':
+        df.drop_duplicates(subset='email', inplace=True)
+    elif database == 'gpdb':
+        df.drop_duplicates(subset='speaker_worker_id', inplace=True)
+        
 
 # convert datetimes to play nicer with excel formatting
-"""if 'created_at' in df.columns:
-    df[['created_at_date', 'created_at_time']] = df['created_at'].astype(
-        'str').str.split(' ', expand=True)
-
-if 'updated_at' in df.columns:
-    df[['updated_at_date', 'updated_at_time']] = df['updated_at'].astype(
-        'str').str.split(' ', expand=True)
-
-df.drop(columns=['updated_at', 'created_at'], inplace=True)"""
-sqlformat = '%Y-%m-%d %H:%M:%S.%f'
-excelformat = '%m/%d/%Y %I:%M:%S %p'
-# 12 hour time: '%I:%M %p'
-
 def convertTime(x):
     temptime = datetime.strptime(x, sqlformat)
     return temptime.strftime(excelformat)
@@ -68,14 +75,7 @@ if 'created_at' in df.columns:
 if 'updated_at' in df.columns:
     df['updated_at'] = df['updated_at'].apply(convertTime)
 
-if 'created_at' in df.columns:
-    df.sort_values(by='created_at', ascending=False, inplace=True)
 
-if dedupe:
-    if database == 'hedb':
-        df.drop_duplicates(subset='email', inplace=True)
-    elif database == 'gpdb':
-        df.drop_duplicates(subset='speaker_worker_id', inplace=True)
 
 df.to_csv(path + output_fn)
 
