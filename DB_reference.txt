@@ -1,17 +1,20 @@
 SSH Commands:
 
 GPDB:
-ssh -L localhost:5434:usa-gpdb-webapi-db.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@3.90.60.8 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+ssh -L localhost:5434:usa-gpdb-webapi-db.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
 HEDB (read replica):
-ssh -L localhost:5434:usa-production-read-replica.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@3.90.60.8 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+ssh -L localhost:5434:usa-production-read-replica.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
 HEDB (prod):
-ssh -L localhost:5434:usa-production.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@3.90.60.8 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+ssh -L localhost:5434:usa-production.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
 analytics-events-data:
-ssh -L localhost:3308:analytics-events-data.cluster-cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:3306 zac_whitney@3.90.60.8 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+ssh -L localhost:3308:analytics-events-data.cluster-cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:3306 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
+
+NOTE: I've updated the above to change the bastion IP from 3.90.60.8 to
+54.89.102.98
 
 Queries:
 
@@ -49,4 +52,17 @@ analytics-events-data:
 SELECT *
 FROM analytics_events
 WHERE customer_id LIKE '%lucasfilm.com%' and recording_id is not null;
+
+
+Namebadges:
+
+SELECT events.title AS "Event Title", events.created_at AS "Event Created At", events.date as "Event Date", users.email as "Customer Email"
+FROM events
+         INNER JOIN customerkeys on events.id = customerkeys.event_id
+         INNER JOIN users on customerkeys.user_id = users.id
+         LEFT OUTER JOIN lti_courses on events.id = lti_courses.event_id
+         LEFT OUTER JOIN lti13_deployments on events.id = lti13_deployments.event_id
+WHERE events.created_at > '2024-05-12'
+  and lti_courses.event_id is null
+  and lti13_deployments.event_id is null;
 

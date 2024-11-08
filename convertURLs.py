@@ -1,12 +1,18 @@
 import pandas as pd
 from numpy import nan
 from datetime import datetime
+import re
 
 #update these before running each time
 path = '/Users/zacwhitney/Documents/CS_Reporting/'
-database = 'hedb'
-input_fn = 'pitt_HEDB_recordings_202402211157.csv'
-output_fn = input_fn.rstrip('.csv') + '_converted.csv'
+database = 'gpdb'
+input_fns = [
+    'algonquin_GPDB_recordings_202411071737.csv',
+
+]
+             
+
+output_fn = input_fns[0].rstrip('.csv') + '_converted.csv'
 dedupe = True
 #recordCols = ['recording']
 
@@ -16,9 +22,13 @@ excelformat = '%m/%d/%Y %I:%M:%S %p'
 # 12 hour time: '%I:%M %p'
 
 
+if len(input_fns) == 1:
+    df = pd.read_csv(path + input_fns[0])
+else:
+    df = pd.concat([pd.read_csv(path + x) for x in input_fns])
+    output_fn = re.sub(r'_lti1\.\d', '', output_fn, flags=re.I)
 
-df = pd.read_csv(path + input_fn)
-
+    
 if database == 'hedb':
     prefix = 'https://us-nc-recordings.s3.amazonaws.com/'
 
@@ -77,7 +87,33 @@ if 'updated_at' in df.columns:
 
 
 
-df.to_csv(path + output_fn)
+df.to_csv(path + output_fn, index = False)
 
     
 
+
+
+### scratch
+"""
+from datetime import timedelta
+from dateutil.relativedelta import relativedelta
+
+#df['created_at'] = df['created_at'].apply(lambda x: datetime.strptime(x, excelformat))
+df['created_at'] = df['created_at'].apply(
+    lambda x: datetime.strptime(x, sqlformat))
+
+start = datetime(2020, 1, 1)
+end = start + relativedelta(months=+6)
+mdy = '%m/%d/%Y'
+
+results = {}
+
+while start < datetime.now():
+    temp = df.loc[(df['created_at'] >= start) & (df['created_at'] < end)]
+    key = f"{start.strftime(mdy)} ~ {end.strftime(mdy)}"
+
+    results[key] = temp.shape[0]
+
+    start = end
+    end = start + relativedelta(months=+6)
+"""
