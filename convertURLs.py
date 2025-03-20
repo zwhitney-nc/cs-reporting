@@ -5,10 +5,11 @@ import re
 
 #update these before running each time
 path = '/Users/zacwhitney/Documents/CS_Reporting/'
-database = 'gpdb'
+database = 'hedb'
 input_fns = [
-    'algonquin_GPDB_recordings_202411071737.csv',
-
+    'rccd_HEDB_recordings_2025.03.20_lti1.3.csv',
+    'rccd_HEDB_recordings_2025.03.20_lti1.1.csv',
+    
 ]
              
 
@@ -60,30 +61,34 @@ elif database == 'gpdb':
 
     df['recording_url'] = df.apply(convertURL_GPDB, axis = 1)
 
-# sort and dedupe
-if 'created_at' in df.columns:
-    df.sort_values(by='created_at',
-                   ascending=False,
-                   inplace=True,
-                   key = lambda x: pd.to_datetime(x, format=sqlformat))
 
-if dedupe:
-    if database == 'hedb':
-        df.drop_duplicates(subset='email', inplace=True)
-    elif database == 'gpdb':
-        df.drop_duplicates(subset='speaker_worker_id', inplace=True)
         
 
 # convert datetimes to play nicer with excel formatting
 def convertTime(x):
-    temptime = datetime.strptime(x, sqlformat)
+    temptime = datetime.fromisoformat(x)
     return temptime.strftime(excelformat)
+
 
 if 'created_at' in df.columns:
     df['created_at'] = df['created_at'].apply(convertTime)
 
 if 'updated_at' in df.columns:
     df['updated_at'] = df['updated_at'].apply(convertTime)
+
+    
+# sort and dedupe
+if 'created_at' in df.columns:
+    df.sort_values(by='created_at',
+                   ascending=False,
+                   inplace=True,
+                   key = lambda x: pd.to_datetime(x, format='ISO8601'))
+
+if dedupe:
+    if database == 'hedb':
+        df.drop_duplicates(subset='email', inplace=True)
+    elif database == 'gpdb':
+        df.drop_duplicates(subset='speaker_worker_id', inplace=True)
 
 
 
@@ -116,4 +121,6 @@ while start < datetime.now():
 
     start = end
     end = start + relativedelta(months=+6)
+
+
 """

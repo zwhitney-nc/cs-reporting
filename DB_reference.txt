@@ -10,7 +10,7 @@ HEDB (prod):
 ssh -L localhost:5434:usa-production.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
 analytics-events-data:
-ssh -L localhost:3308:analytics-events-data.cluster-cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:3306 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+ssh -L localhost:3308:analytics-events-data.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:3306 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
 
 NOTE: I've updated the above to change the bastion IP from 3.90.60.8 to
