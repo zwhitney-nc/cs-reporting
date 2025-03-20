@@ -82,7 +82,7 @@ if 'created_at' in df.columns:
     df.sort_values(by='created_at',
                    ascending=False,
                    inplace=True,
-                   key = lambda x: pd.to_datetime(x, format='ISO8601'))
+                   key = lambda x: pd.to_datetime(x, format=excelformat))
 
 if dedupe:
     if database == 'hedb':
