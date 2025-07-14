@@ -7,13 +7,12 @@ import re
 path = '/Users/zacwhitney/Documents/CS_Reporting/'
 database = 'hedb'
 input_fns = [
-    'rccd_HEDB_recordings_2025.03.20_lti1.3.csv',
-    'rccd_HEDB_recordings_2025.03.20_lti1.1.csv',
-    
+    'UW_HEDB_recordings_20250709_lti1.1.csv',
+    'UW_HEDB_recordings_20250709_lti1.3.csv',
 ]
              
 
-output_fn = input_fns[0].rstrip('.csv') + '_converted.csv'
+output_fn = input_fns[0].removesuffix('.csv') + '_converted.csv'
 dedupe = True
 #recordCols = ['recording']
 
@@ -123,4 +122,10 @@ while start < datetime.now():
     end = start + relativedelta(months=+6)
 
 
+def getPhoneticAnnounce(x):
+    try: 
+        return x['phonetic_announce']
+    except (TypeError, KeyError):
+        return nan
 """
+

@@ -1,20 +1,21 @@
 SSH Commands:
 
 GPDB:
-ssh -L localhost:5434:usa-gpdb-webapi-db.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+ssh -L localhost:5434:usa-gpdb-webapi-db.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@13.220.233.31 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
 HEDB (read replica):
-ssh -L localhost:5434:usa-production-read-replica.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+ssh -L localhost:5434:usa-production-read-replica.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@13.220.233.31 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
 HEDB (prod):
-ssh -L localhost:5434:usa-production.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+ssh -L localhost:5434:usa-production.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:5432 zac_whitney@13.220.233.31 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
 analytics-events-data:
-ssh -L localhost:3308:analytics-events-data.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:3306 zac_whitney@54.89.102.98 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
+ssh -L localhost:3308:analytics-events-data.cfkgfnkdhg4q.us-east-1.rds.amazonaws.com:3306 zac_whitney@13.220.233.31 -i /Users/zacwhitney/Documents/CS_Reporting/certs/aws_ed25519
 
 
 NOTE: I've updated the above to change the bastion IP from 3.90.60.8 to
 54.89.102.98
+NOTE (2025.05.21): Updated bastion IP again, from 54.89.102.98 to 13.220.233.31
 
 Queries:
 
@@ -65,4 +66,11 @@ FROM events
 WHERE events.created_at > '2024-05-12'
   and lti_courses.event_id is null
   and lti13_deployments.event_id is null;
+
+API call for Mixpanel events by customer id:
+
+curl --request GET \
+--url 'https://data.mixpanel.com/api/2.0/export?project_id=2928951&from_date=2021-01-01&to_date=2025-04-21&event=%5B%22common_play_pronunciation%22%5D&limit=1000&where=%28%22emerson.com%22%20in%20properties%5B%22id%22%5D%29' \
+--header 'accept: text/plain' \
+--header 'authorization: Basic c2VydmljZS1hY2N0LXphdy42YTc3YWUubXAtc2VydmljZS1hY2NvdW50OkR1eXNYS09BUDNucVd0dG41QzJLWTlHQ1NPRzFyOU5Q'
 
