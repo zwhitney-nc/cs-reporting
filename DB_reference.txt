@@ -72,5 +72,5 @@ API call for Mixpanel events by customer id:
 curl --request GET \
 --url 'https://data.mixpanel.com/api/2.0/export?project_id=2928951&from_date=2021-01-01&to_date=2025-04-21&event=%5B%22common_play_pronunciation%22%5D&limit=1000&where=%28%22emerson.com%22%20in%20properties%5B%22id%22%5D%29' \
 --header 'accept: text/plain' \
---header 'authorization: Basic {MIXPANEL_API_KEY}'
+--header 'authorization: Basic {MIXPANEL_API_KEY}' #grab from .env
 
